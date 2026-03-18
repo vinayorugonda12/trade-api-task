@@ -7,6 +7,10 @@ import logging
 logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 
+@app.get("/")
+def home():
+    return {"message": "Trade Opportunities API is running 🚀"}
+
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
 
