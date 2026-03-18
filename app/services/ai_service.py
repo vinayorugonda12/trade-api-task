@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+api_key = os.getenv("GEMINI_API_KEY")
+print("API KEY:", api_key)
 def analyze_data(sector: str, data: str):
     try:
         model = genai.GenerativeModel("models/gemini-flash-latest")
@@ -13,30 +15,23 @@ def analyze_data(sector: str, data: str):
 Analyze the {sector} sector in India.
 
 Data:
-{data}
+{data[:200]}
 
-Give markdown:
-- Summary
-- Opportunities
-- Risks
+Provide a structured markdown report:
+
+## Market Summary
+## Key Trends
+## Trade Opportunities
+## Risks
+## Conclusion
 """
 
         response = model.generate_content(prompt)
-        return response.text
 
-    except Exception:
-        # Fallback response
-        return f"""
-## Market Summary
-The {sector} sector in India shows moderate growth.
+        return response.text if response.text else "No response from AI"
 
-## Opportunities
-- Increasing demand
-- Government support
+    except Exception as e:
+        # ✅ ADD THIS HERE
+        print("Gemini Error:", e)
 
-## Risks
-- Market volatility
-
-## Conclusion
-Stable sector with growth potential.
-"""
+        return f"Error: {str(e)}"
